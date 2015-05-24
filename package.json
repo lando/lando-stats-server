@@ -1,0 +1,20 @@
+{
+  "name": "kalabox-metrics-rest",
+  "version": "0.1.0",
+  "description": "Anonymous user metrics REST API.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "benjamin.cauldwell@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^2.9.25",
+    "express": "^4.12.4",
+    "lodash": "^3.9.1",
+    "restler": "^3.2.2",
+    "uuid": "^2.0.1",
+    "verror": "^1.6.0"
+  }
+}
