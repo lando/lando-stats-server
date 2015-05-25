@@ -15,6 +15,13 @@ var app = express();
 app.use(bodyParser.json());
 
 /*
+ * Logging function.
+ */
+var log = function(msg) {
+  console.log('HTTP: ' + msg);
+};
+
+/*
  * Take a promise and monitor it's completion.
  */
 var monitorTask = function(prm, res) {
@@ -25,12 +32,14 @@ var monitorTask = function(prm, res) {
   .timeout(4 * 1000)
   // Respond to request.
   .then(function(data) {
+    log('response -> ' + data);
     res.json(data);  
   })
   // Handle errors with status code 500 and error message.
   .catch(function(err) {
+    log('error -> ' + err.message);
     var data = {error: err.message};
-    res.status(500).send(data);
+    res.status(500).json(data);
   });
 
 };
