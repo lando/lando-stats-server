@@ -1,4 +1,4 @@
 {
-  "db": "mongodb://localhost:27017/test",
-  "web": "http://localhost:3030"
+  "db": "mongodb://db.metrics.kbox:27017",
+  "web": "http://metrics.kbox:80"
 }
