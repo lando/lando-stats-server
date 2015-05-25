@@ -1,3 +1,4 @@
 {
-  "db": "mongodb://localhost:27017/test"
+  "db": "mongodb://localhost:27017/test",
+  "web": "http://localhost:3030"
 }
