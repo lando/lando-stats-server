@@ -5,11 +5,15 @@ var Promise = require('bluebird');
 var shared = require('./shared.js');
 var VError = require('verror');
 var uuid = require('uuid');
+var Db = require('./mongoAdapter.js');
+var config = require('./config.json');
 
 /*
  * Singleton database instance.
  */
-var db = {};
+var db = _.once(function() {
+  return new Db(config.db);
+});
 
 /*
  * Take a task promise and a name for that task and monitor it's completion.
@@ -35,7 +39,7 @@ var monitorTask = function(prm, taskName) {
  */
 var getAll = function() {
 
-  var prm = Promise.resolve(db);
+  var prm = db().getAll();
   return monitorTask(prm, 'getAll');
 
 };
@@ -46,17 +50,7 @@ var getAll = function() {
 var get = function(id) {
 
   // Get record from db.
-  var prm = Promise.try(function() {
-    // Get record.
-    var record = db[id];
-    // If record doesn't exist, throw an error.
-    if (!record) {
-      throw new Error('ID does not exist: ' + id); 
-    }
-    // Return record.
-    return record;
-  });
-
+  var prm = db().get(id);
   return monitorTask(prm, 'get');
 
 };
@@ -66,24 +60,10 @@ var get = function(id) {
  */
 var create = function() {
 
-  var prm = Promise.try(function() {
-    // Create a new UUID.
-    var id = uuid.v4();
-    // Create new record.
-    var record = {
-      id: id,
-      created: shared.ts()
-    };
-    // Validate ID doesn't already exist.
-    if (db[id]) {
-      throw new Error('ID already exists: ' + id);
-    }
-    // Add record to db.
-    db[id] = record;
-    // Return record.
-    return record;
+  var prm = db().create()
+  .then(function(data) {
+    return {id: data.insertedId}; 
   });
-
   return monitorTask(prm, 'create');
 
 };
@@ -93,31 +73,7 @@ var create = function() {
  */
 var append = function(id, metaData) {
   
-  // Get existing record.
-  var prm = get(id)
-  .then(function(obj) {
-    // Make sure meta data array exists.
-    if(!obj.metaData) {
-      obj.metaData = [];
-    }
-    // Validate.
-    if (!metaData) {
-      throw new Error('Invalid metaData: ' + share.pp(metaData));
-    } else if (!metaData.created) {
-      throw new Error('Invalid metaData.created: ' + share.pp(metaData));
-    } else if (!metaData.data) {
-      throw new Error('Invalid metaData.data: ' + share.pp(metaData));
-    }
-    // Make meta data record.
-    var record = {
-      created: metaData.created,
-      recorded: shared.ts(),
-      data: metaData.data
-    };
-    // Add meta data record to db record.
-    obj.metaData.push(record);
-  });
-
+  var prm = db().append(id, metaData);
   return monitorTask(prm, 'append');
 
 };
