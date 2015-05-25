@@ -1,6 +1,6 @@
 'use strict';
 
-var MongoClient = Promise.promisifyAll(require('mongodb')).MongoClient;
+var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectId;
 var Promise = require('bluebird');
 var shared = require('./shared.js');
@@ -91,8 +91,8 @@ Db.prototype.insert = function(doc) {
 
     // Call insert.
     return Promise.fromNode(function(cb) {
-      log('inserting => ' + shared.pp(record));
-      coll.insertOne(record, cb);
+      log('inserting => ' + shared.pp(doc));
+      coll.insertOne(doc, cb);
     });
 
   });
@@ -162,7 +162,7 @@ Db.prototype.create = function() {
   return self.get(id)
   // Make sure there no documents with new id already exist.
   .then(function(docs) {
-    if (results.length > 0) {
+    if (docs.length > 0) {
       throw new Error('Documents with ID already exists: ' + id);
     }
   })
