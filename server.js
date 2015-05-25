@@ -108,4 +108,9 @@ app.put('/metrics/v1/:id', function(req, res) {
 // Start listening.
 // @todo: @bcauldwell - We need to change the port to something better.
 var port = url.parse(config.web).port;
-app.listen(port);
+Promise.fromNode(function(cb) {
+  app.listen(port, cb);  
+})
+.then(function() {
+  log('Listening on port: ' + port);
+});
