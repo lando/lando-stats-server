@@ -3,8 +3,10 @@
 var shared = require('./shared.js');
 
 var Client = require('./client.js');
+var Promise = require('bluebird');
+var config = require('./config.json');
 
-var client = new Client(null, 'http://metrics.kbox');
+var client = new Client(null, config.web);
 
 client.create()
 .then(function() {
