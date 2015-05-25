@@ -7,6 +7,9 @@ var metricsDb = require('./metricsDb.js');
 var Promise = require('bluebird');
 var uuid = require('uuid');
 var VError = require('verror');
+var url = require('url');
+var config = require('./config.json');
+var shared = require('./shared.js');
 
 // Create express app.
 var app = express();
@@ -32,12 +35,12 @@ var monitorTask = function(prm, res) {
   .timeout(4 * 1000)
   // Respond to request.
   .then(function(data) {
-    log('response -> ' + data);
+    log('response -> ' + shared.pp(data));
     res.json(data);  
   })
   // Handle errors with status code 500 and error message.
   .catch(function(err) {
-    log('error -> ' + err.message);
+    log('error -> ' + shared.pp(err));
     var data = {error: err.message};
     res.status(500).json(data);
   });
@@ -104,4 +107,5 @@ app.put('/metrics/v1/:id', function(req, res) {
 
 // Start listening.
 // @todo: @bcauldwell - We need to change the port to something better.
-app.listen(3030);
+var port = url.parse(config.web).port;
+app.listen(port);
