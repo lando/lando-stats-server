@@ -5,6 +5,7 @@
 var _ = require('lodash');
 var rest = require('restler');
 var Promise = require('bluebird');
+Promise.longStackTraces();
 var shared = require('./shared.js');
 var urls = require('url');
 var util = require('util');
@@ -61,7 +62,11 @@ Client.prototype.__request = function(verb, pathname, data) {
     return new Promise(function(fulfill, reject) {
       rest[verb](url, data)
       .on('success', fulfill)
-      .on('fail', reject)
+      .on('fail', function(data, resp) {
+        var data = shared.pp(data);
+        var err = new Error(data);
+        reject(err);
+      })
       .on('error', reject);
     })
     // Give request a 10 second timeout.
