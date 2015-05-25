@@ -15,7 +15,7 @@ var VError = require('verror');
 // be some barebones security.
 /*
  * Default target.
- */:
+ */
 var DEFAULT_TARGET = {
   protocol: 'http',
   hostname: '127.0.0.1',
@@ -34,7 +34,7 @@ function Client(id, address) {
 
   // The address argument is also optional.
   if (address) {
-    this.target = url.parse(address);
+    this.target = urls.parse(address);
   } else {
     // Grab the default target that points to the production instance.
     this.target = DEFAULT_TARGET;
@@ -52,7 +52,7 @@ Client.prototype.__request = function(verb, pathname, data) {
 
   // Build url.
   return Promise.try(function() {
-    var obj = _.extend({pathname: pathname}, self.target);
+    var obj = _.extend(self.target, {pathname: pathname});
     return urls.format(obj);
   })
   .then(function(url) {
