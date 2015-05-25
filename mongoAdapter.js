@@ -6,6 +6,7 @@ var Promise = require('bluebird');
 var shared = require('./shared.js');
 var util = require('util');
 var uuid = require('uuid');
+var VError = require('verror');
 
 /*
  * Log function.
@@ -35,11 +36,15 @@ Db.prototype.__with = function(fn) {
     log('Connecting to DB -> ' + self.url);
     MongoClient.connect(self.url, cb);
   })
+  // Wrap connection errors.
+  .catch(function(err) {
+    throw new VError(err, 'Connection error: %s', self.url);
+  })
   // Set timeout.
   .timeout(3 * 1000)
   // Wrap timeout errors.
   .catch(Promise.TimeoutError, function(err) {
-    throw new Verror(err, 'Connecting to %s timed out.', self.url);
+    throw new VError(err, 'Connecting to %s timed out.', self.url);
   })
   // Log connection.
   .tap(function() {
