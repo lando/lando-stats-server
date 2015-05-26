@@ -3,6 +3,7 @@
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectId;
 var Promise = require('bluebird');
+var retry = require('retry-bluebird');
 var shared = require('./shared.js');
 var util = require('util');
 var uuid = require('uuid');
@@ -31,9 +32,14 @@ Db.prototype.__with = function(fn) {
   var self = this;
 
   // Connect to DB.
-  return Promise.fromNode(function(cb) {
+  return Promise.try(function() {
     log('Connecting to DB -> ' + self.url);
-    MongoClient.connect(self.url, cb);
+    // Retry up to 3 times with a backoff of 500 ms.
+    return retry({max: 3, backoff: 500}, function() {
+      return Promise.fromNode(function(cb) {
+        MongoClient.connect(self.url, cb);
+      });
+    });
   })
   // Set timeout.
   .timeout(3 * 1000)
