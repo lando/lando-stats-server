@@ -22,7 +22,7 @@ var log = function(msg) {
 function Db(url) {
   log('Created DB: ' + url);
   this.url = url;
-};
+}
 
 /*
  * Get a DB connection then execute callback.
@@ -85,8 +85,8 @@ Db.prototype.find = function(query) {
       log('query => ' + shared.pp(query));
       coll.find(query).toArray(cb);
     });
-    
-  })
+
+  });
 
 };
 
@@ -94,7 +94,7 @@ Db.prototype.find = function(query) {
  * Insert a new document.
  */
 Db.prototype.insert = function(doc) {
-  
+
   // Save for later.
   var self = this;
 
@@ -114,7 +114,7 @@ Db.prototype.insert = function(doc) {
  * Replace a document.
  */
 Db.prototype.replace = function(doc) {
-  
+
   // Save for later.
   var self = this;
 
@@ -145,7 +145,7 @@ Db.prototype.getAll = function() {
  * Return all documents that have a given id.
  */
 Db.prototype.get = function(id) {
-  
+
   var self = this;
 
   return self.find({_id: id});
@@ -159,17 +159,17 @@ Db.prototype.create = function() {
 
   // Save for later.
   var self = this;
-  
+
   // Create new id.
   var id = uuid.v4();
-  
+
   // Create document.
   var doc = {
     _id: id,
     created: shared.ts()
   };
 
-  // Find docs with the new id. 
+  // Find docs with the new id.
   return self.get(id)
   // Make sure there no documents with new id already exist.
   .then(function(docs) {
@@ -220,7 +220,7 @@ Db.prototype.append = function(id, metaData) {
   .then(function(doc) {
     // Make sure meta data array exists.
     if (!doc.metaData) {
-      doc.metaData = [];    
+      doc.metaData = [];
     }
     // Create new meta data record.
     var record = {
@@ -234,7 +234,7 @@ Db.prototype.append = function(id, metaData) {
   })
   // Replace document.
   .then(function(doc) {
-    return self.replace(doc); 
+    return self.replace(doc);
   });
 
 };

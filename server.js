@@ -28,7 +28,7 @@ var log = function(msg) {
  * Take a promise and monitor it's completion.
  */
 var monitorTask = function(prm, res) {
-  
+
   // Wait for promise to finsish.
   return prm
   // Set a timeout.
@@ -36,7 +36,7 @@ var monitorTask = function(prm, res) {
   // Respond to request.
   .then(function(data) {
     log('response -> ' + shared.pp(data));
-    res.json(data);  
+    res.json(data);
   })
   // Handle errors with status code 500 and error message.
   .catch(function(err) {
@@ -109,7 +109,7 @@ app.put('/metrics/v1/:id', function(req, res) {
 // @todo: @bcauldwell - We need to change the port to something better.
 var port = url.parse(config.web).port;
 Promise.fromNode(function(cb) {
-  app.listen(port, cb);  
+  app.listen(port, cb);
 })
 .then(function() {
   log('Listening on port: ' + port);

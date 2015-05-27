@@ -41,7 +41,7 @@ function Client(id, address) {
     this.target = DEFAULT_TARGET;
   }
 
-};
+}
 
 /*
  * Send and handle a REST request.
@@ -63,8 +63,7 @@ Client.prototype.__request = function(verb, pathname, data) {
       rest[verb](url, data)
       .on('success', fulfill)
       .on('fail', function(data, resp) {
-        var data = shared.pp(data);
-        var err = new Error(data);
+        var err = new Error(shared.pp(data));
         reject(err);
       })
       .on('error', reject);
@@ -81,7 +80,6 @@ Client.prototype.__request = function(verb, pathname, data) {
     });
 
   });
-
 
 };
 
@@ -113,10 +111,10 @@ Client.prototype.create = function() {
 };
 
 /*
- * Return the metric record's ID, or create one if it doesn't have one. 
+ * Return the metric record's ID, or create one if it doesn't have one.
  */
 Client.prototype.__getId = function() {
-  
+
   var self = this;
 
   if (self.id) {

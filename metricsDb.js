@@ -62,17 +62,17 @@ var create = function() {
 
   var prm = db().create()
   .then(function(data) {
-    return {id: data.insertedId}; 
+    return {id: data.insertedId};
   });
   return monitorTask(prm, 'create');
 
 };
 
 /*
- * Add a meta data record to a db record. 
+ * Add a meta data record to a db record.
  */
 var append = function(id, metaData) {
-  
+
   var prm = db().append(id, metaData);
   return monitorTask(prm, 'append');
 
