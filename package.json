@@ -2,10 +2,17 @@
   "name": "kalabox-metrics-rest",
   "version": "0.1.0",
   "description": "Anonymous user metrics REST API.",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+  "main": "index.js",
+  "keywords": [
+    "kalabox"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kalabox/kalabox-metrics-rest"
+  },
+  "bugs": {
+    "email": "benjamin.cauldwell@gmail.com",
+    "url": "http://github.com/kalabox/kalabox-metrics-rest"
   },
   "author": "benjamin.cauldwell@gmail.com",
   "license": "ISC",
@@ -19,5 +26,13 @@
     "retry-bluebird": "^0.1.1",
     "uuid": "^2.0.1",
     "verror": "^1.6.0"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-bump": "0.0.16",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-jscs": "~0.8.1",
+    "jshint-stylish": "~1.0.0",
+    "matchdep": "^0.3.0"
   }
 }
