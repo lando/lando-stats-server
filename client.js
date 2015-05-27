@@ -72,10 +72,11 @@ Client.prototype.__request = function(verb, pathname, data) {
     .timeout(10 * 1000)
     // Wrap errors for more information.
     .catch(function(err) {
+      var dataString = typeof data === 'object' ? JSON.stringify(data) : data;
       throw new VError(err,
         'Error during REST request. url=%s, data=%s.',
         [verb, url].join(':'),
-        data
+        dataString
       );
     });
 
