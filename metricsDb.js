@@ -37,9 +37,9 @@ var monitorTask = function(prm, taskName) {
 /*
  * Return the entire db.
  */
-var getAll = function() {
+var getAll = function(iterator) {
 
-  var prm = db().getAll();
+  var prm = db().getAll(iterator);
   return monitorTask(prm, 'getAll');
 
 };

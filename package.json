@@ -22,6 +22,8 @@
     "express": "^4.12.4",
     "lodash": "^3.9.1",
     "mongodb": "^2.0.33",
+    "passport": "^0.2.2",
+    "passport-http": "^0.2.2",
     "restler": "^3.2.2",
     "retry-bluebird": "^0.1.1",
     "uuid": "^2.0.1",

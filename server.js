@@ -10,12 +10,40 @@ var VError = require('verror');
 var url = require('url');
 var config = require('./config.json');
 var shared = require('./shared.js');
+var passport = require('passport');
+var BasicStrategy = require('passport-http').BasicStrategy;
 
-// Create express app.
+/*
+ * Verify the admin login.
+ */
+var verifyAdminLogin = function(user, password, next) {
+  if (user === config.adminUser && password === config.adminPassword) {
+    next(null, user);
+  } else {
+    next(null, false, {message: 'Incorrect login'});
+  }
+
+};
+
+/*
+ * Setup passport to use basic authentication for admin login.
+ */
+passport.use(new BasicStrategy(verifyAdminLogin));
+
+/*
+ * Create express app.
+ */
 var app = express();
 
-// Add a body parser, so we can parse post bodies.
+/*
+ * Add a body parser, so we can parse post bodies.
+ */
 app.use(bodyParser.json());
+
+/*
+ * Add passport to express app.
+ */
+app.use(passport.initialize());
 
 /*
  * Logging function.
@@ -32,7 +60,7 @@ var monitorTask = function(prm, res) {
   // Wait for promise to finsish.
   return prm
   // Set a timeout.
-  .timeout(4 * 1000)
+  .timeout(10 * 1000)
   // Respond to request.
   .then(function(data) {
     log('response -> ' + shared.pp(data));
@@ -55,21 +83,31 @@ app.get('/', function(req, res, next) {
   next();
 });
 
+var authenticate = function() {
+  return passport.authenticate('basic', {session: false});
+};
+
 /*
  * Handle getAll request.
  */
-app.get('/metrics/v1/', function(req, res) {
+app.get('/metrics/v1/admin/',
+passport.authenticate('basic', {session: false}),
+function(req, res) {
 
   // Get all from db.
-  var prm = metricsDb.getAll();
-  monitorTask(metricsDb.getAll(), res);
+  var prm = metricsDb.getAll(function(record) {
+    res.json(record);
+  });
+  monitorTask(prm, res);
 
 });
 
 /*
  * Handle get request.
  */
-app.get('/metrics/v1/:id', function(req, res) {
+app.get('/metrics/v1/admin/:id',
+passport.authenticate('basic', {session: false}),
+function(req, res) {
 
   // Get record from db.
   var prm = metricsDb.get(req.params.id);

@@ -1,4 +1,6 @@
 {
+  "adminUser": "admin",
+  "adminPassword": "foo",
   "db": "mongodb://db.metrics.kbox:27017",
   "web": "http://metrics.kbox:80"
 }
