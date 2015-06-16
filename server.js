@@ -95,8 +95,12 @@ passport.authenticate('basic', {session: false}),
 function(req, res) {
 
   // Get all from db.
-  var prm = metricsDb.getAll(function(record) {
-    res.json(record);
+  var prm = metricsDb.getAll(function(stream) {
+    // Pipe records to response.
+    return Promise.fromNode(function(cb) {
+      stream.pipe(res);
+      stream.on('end', cb);
+    });
   });
   monitorTask(prm, res);
 

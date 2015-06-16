@@ -133,21 +133,20 @@ Db.prototype.replace = function(doc) {
 /*
  * Return all documents in DB.
  */
-Db.prototype.getAll = function(iterator) {
+Db.prototype.getAll = function(fn) {
 
   // Save for later.
   var self = this;
 
   return self.__with(function(db, coll) {
 
-    return Promise.fromNode(function(cb) {
-      // Get cursor stream.
-      var stream = coll.find().stream();
-      // Call iterator on data.
-      stream.on('data', iterator);
-      // Call callback on end.
-      stream.on('end', cb);
+    // Get cursor stream and transform to strings.
+    var stream = coll.find().stream({
+      transform: function(record) {
+        return JSON.stringify(record);
+      }    
     });
+    return fn(stream);
 
   });
 
