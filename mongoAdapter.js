@@ -141,11 +141,7 @@ Db.prototype.getAll = function(fn) {
   return self.__with(function(db, coll) {
 
     // Get cursor stream and transform to strings.
-    var stream = coll.find().stream({
-      transform: function(record) {
-        return JSON.stringify(record);
-      }    
-    });
+    var stream = coll.find().stream();
     return fn(stream);
 
   });

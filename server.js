@@ -98,8 +98,16 @@ function(req, res) {
   var prm = metricsDb.getAll(function(stream) {
     // Pipe records to response.
     return Promise.fromNode(function(cb) {
-      stream.pipe(res);
-      stream.on('end', cb);
+      var ids = [];
+      stream.on('data', function(record) {
+        ids.push(record._id);
+      });
+      stream.on('end', function() {
+        var result = {
+          ids: ids
+        };
+        cb(null, result);
+      });
     });
   });
   monitorTask(prm, res);
