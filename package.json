@@ -17,17 +17,23 @@
   "author": "benjamin.cauldwell@gmail.com",
   "license": "ISC",
   "dependencies": {
+    "JSONStream": "^1.0.4",
     "bluebird": "^2.9.25",
     "body-parser": "^1.12.4",
     "express": "^4.12.4",
     "lodash": "^3.9.1",
+    "mailgun-js": "^0.7.1",
+    "moment": "^2.10.6",
     "mongodb": "^2.0.33",
     "passport": "^0.2.2",
     "passport-http": "^0.2.2",
+    "promise-streams": "^0.2.7",
     "restler": "^3.2.2",
     "retry-bluebird": "^0.1.1",
+    "string-similarity": "^1.0.0",
     "uuid": "^2.0.1",
-    "verror": "^1.6.0"
+    "verror": "^1.6.0",
+    "yargs": "^3.25.0"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

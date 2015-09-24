@@ -85,12 +85,30 @@ Client.prototype.__request = function(verb, pathname, data) {
 };
 
 /*
- * Get full list of all metrics records.
+ * Get full list of all metrics record ids.
  */
-Client.prototype.getAll = function() {
+Client.prototype.getAll = function(username, password) {
 
-  return this.__request('get', 'metrics/v1/');
+  var opts = {
+    username: username,
+    password: password
+  };
 
+  return this.__request('get', 'metrics/v1/admin', opts);
+
+};
+
+/*
+ * Get one metric record.
+ */
+Client.prototype.getOne = function(id, username, password) {
+
+  var opts = {
+    username: username,
+    password: password
+  };
+
+  return this.__request('get', 'metrics/v1/admin/' + id, opts);
 };
 
 /*

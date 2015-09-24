@@ -1,6 +1,6 @@
 {
   "adminUser": "admin",
   "adminPassword": "foo",
-  "db": "mongodb://db.metrics.kbox:27017",
-  "web": "http://metrics.kbox:80"
+  "db": "mongodb://db.stats.kbox:27017",
+  "web": "http://stats.kbox:80"
 }
