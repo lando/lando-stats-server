@@ -7,8 +7,8 @@ var config = require('./config.json');
 
 var url = argv._[0] || config.web;
 
-var username = argv.u.split(':')[0] || config.adminUser;
-var password = argv.u.split(':')[1] || config.adminPassword;
+var username = argv.u ? argv.u.split(':')[0] : config.adminUser;
+var password = argv.u ? argv.u.split(':')[1] : config.adminPassword;
 
 var client = new Client(null, url);
 
