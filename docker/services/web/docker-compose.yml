@@ -1,0 +1,14 @@
+db:
+  container_name: db1
+  build: ../../mongo
+  volumes:
+    - /home/ubuntu/data/sql:/sql
+web:
+  container_name: web1
+  build: ../../node
+  volumes:
+    - /home/ubuntu/data/stats:/code
+  links:
+    - db
+  ports:
+    - 80:80

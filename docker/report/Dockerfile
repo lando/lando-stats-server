@@ -11,4 +11,7 @@ VOLUME /code
 
 EXPOSE 80
 
-CMD ["/usr/bin/node", "/code/server.js"]
+CMD [
+  "/usr/bin/node", "/code/download.js",
+  "|", "/usr/bin/node", "/code/report.js", "-d", "14"
+]

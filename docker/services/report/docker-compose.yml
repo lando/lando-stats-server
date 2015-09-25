@@ -1,0 +1,5 @@
+report:
+  container_name: report1
+  build: ../../report
+  volumes:
+    - /home/ubuntu/data/stats:/code
