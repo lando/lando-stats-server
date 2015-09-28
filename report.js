@@ -85,7 +85,11 @@ process.stdin
       state.dates[keyDate][keyId] = true;
     } else if (action === 'error') {
       // Classify all error actions.
-      classifier.classify(data.metaData.data.message);
+      if (!data.metaData.data.message) {
+        //throw new Error(JSON.stringify(data, null, '  '));
+      } else {
+        classifier.classify(data.metaData.data.message);
+      }
     }
   });
 })
@@ -105,6 +109,7 @@ process.stdin
   // Report error groups.
   report.errors = _.map(classifier.groups, function(group) {
     group.count = group.samples.length;
+    group.samples = _.uniq(group.samples);
     group.samples = _.slice(group.samples, 0, 10);
     return group;
   });
