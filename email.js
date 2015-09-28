@@ -4,6 +4,7 @@
  * Uses mailgun service to send emails.
  */
 
+var config = require('./config.json');
 var Promise = require('bluebird');
 
 // Authorization information.
@@ -31,7 +32,7 @@ function send(subject, text) {
 
   var data = {
     from: 'Kalabox Reports <postmaster@' + domain + '>',
-    to: 'ben@kalamuna.com',
+    to: config.email.to,
     subject: subject,
     text: text
   };

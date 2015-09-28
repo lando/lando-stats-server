@@ -1,6 +1,9 @@
 {
   "adminUser": "admin",
   "adminPassword": "foo",
+  "email": {
+    "to": "info@info.com"
+  },
   "db": "mongodb://db.stats.kbox:27017",
   "web": "http://stats.kbox:80"
 }
