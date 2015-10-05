@@ -18,7 +18,7 @@ function Classifier(threshold) {
 /*
  * Classify a string.
  */ 
-Classifier.prototype.classify = function(s) {
+Classifier.prototype.classify = function(s, id) {
 
   // Make sure it's a string we are classifying.
   if (typeof s !== 'string') {
@@ -40,11 +40,13 @@ Classifier.prototype.classify = function(s) {
     // @todo: Really a merge of samples should happen here.
     // Existing group found, merge sample with existing group.
     group.samples.push(s);
+    group.ids.push(id);
   } else {
     // No existing group found, so create one.
     self.groups.push({
       prototype: s,
-      samples: [s]
+      samples: [s],
+      ids: [id]
     });
   }
 

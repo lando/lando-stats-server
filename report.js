@@ -41,7 +41,8 @@ function datesBetween(start, end) {
 var state = {
   startDate: startDate.format('YYYY-MM-DD'),
   endDate: endDate.format('YYYY-MM-DD'),
-  dates: {}
+  dates: {},
+  osInfo: {}
 };
 
 // Add list of dates to state.
@@ -83,12 +84,24 @@ process.stdin
     if (_.contains(['start', 'stop'], action)) {
       // Add activity to state.
       state.dates[keyDate][keyId] = true;
+      // Add os info to state.
+      var os = data.metaData.data.os;
+      if (!state.osInfo[os.type]) {
+        state.osInfo[os.type] = {};
+      }
+      if (!state.osInfo[os.type][os.platform]) {
+        state.osInfo[os.type][os.platform] = {};
+      }
+      if (!state.osInfo[os.type][os.platform][os.release]) {
+        state.osInfo[os.type][os.platform][os.release] = 0;
+      }
+      state.osInfo[os.type][os.platform][os.release] += 1;
     } else if (action === 'error') {
       // Classify all error actions.
       if (!data.metaData.data.message) {
         //throw new Error(JSON.stringify(data, null, '  '));
       } else {
-        classifier.classify(data.metaData.data.message);
+        classifier.classify(data.metaData.data.message, keyId);
       }
     }
   });
@@ -106,13 +119,22 @@ process.stdin
   report.activeUsersByDate = _.mapValues(state.dates, function(o, date) {
     return _.keys(o).length;
   });
+  // Report os info.
+  report.osInfo = state.osInfo;
   // Report error groups.
   report.errors = _.map(classifier.groups, function(group) {
     group.count = group.samples.length;
     group.samples = _.uniq(group.samples);
     group.samples = _.slice(group.samples, 0, 10);
+    group.ids = _.uniq(group.ids);
+    group.idCount = group.ids.length;
+    delete group.ids;
     return group;
   });
+  report.errors = _.sortBy(report.errors, function(group) {
+    return group.count;
+  });
+  report.errors.reverse();
   // Output report either to stdout or email.
   var reportString = JSON.stringify(report, null, '  ');
   if (argv.email) {
