@@ -26,7 +26,7 @@ client.getAll(username, password)
     count += 1;
     return client.getOne(id, username, password)
     .then(function(data) {
-      console.log(JSON.stringify(data[0]));
+      console.log(JSON.stringify(data[0], null, ''));
     });
   })
   .then(function() {
