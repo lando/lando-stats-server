@@ -42,6 +42,7 @@ var state = {
   startDate: startDate.format('YYYY-MM-DD'),
   endDate: endDate.format('YYYY-MM-DD'),
   dates: {},
+  version: {},
   osInfo: {}
 };
 
@@ -96,6 +97,21 @@ process.stdin
         state.osInfo[os.type][os.platform][os.release] = 0;
       }
       state.osInfo[os.type][os.platform][os.release] += 1;
+      // Add kbox version info to state.
+      var version = data.metaData.data.version.split('.');
+      var major = version[0];
+      var minor = version[1];
+      var patch = version[2];
+      if (!state.version[major]) {
+        state.version[major] = {};
+      }
+      if (!state.version[major][minor]) {
+        state.version[major][minor] = {};
+      }
+      if (!state.version[major][minor][patch]) {
+        state.version[major][minor][patch] = 0;
+      }
+      state.version[major][minor][patch] += 1;
     } else if (action === 'error') {
       // Classify all error actions.
       if (!data.metaData.data.message) {
@@ -119,6 +135,8 @@ process.stdin
   report.activeUsersByDate = _.mapValues(state.dates, function(o, date) {
     return _.keys(o).length;
   });
+  // Report version info.
+  report.version = state.version;
   // Report os info.
   report.osInfo = state.osInfo;
   // Report error groups.
