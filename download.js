@@ -1,7 +1,7 @@
 'use strict';
 
 var Promise = require('bluebird');
-var Client = require('./client.js');
+var Client = require('kalabox-stats-client').Client;
 var argv = require('yargs').argv;
 var config = require('./config.json');
 
