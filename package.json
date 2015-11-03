@@ -1,18 +1,18 @@
 {
-  "name": "kalabox-metrics-rest",
+  "name": "kalabox-stats-server",
   "version": "0.1.0",
-  "description": "Anonymous user metrics REST API.",
+  "description": "Anonymous user stats REST API service.",
   "main": "index.js",
   "keywords": [
     "kalabox"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/kalabox/kalabox-metrics-rest"
+    "url": "https://github.com/kalabox/kalabox-stats-server"
   },
   "bugs": {
     "email": "benjamin.cauldwell@gmail.com",
-    "url": "http://github.com/kalabox/kalabox-metrics-rest"
+    "url": "http://github.com/kalabox/kalabox-stats-server"
   },
   "author": "benjamin.cauldwell@gmail.com",
   "license": "ISC",
@@ -28,7 +28,6 @@
     "passport": "^0.2.2",
     "passport-http": "^0.2.2",
     "promise-streams": "^0.2.7",
-    "restler": "^3.2.2",
     "retry-bluebird": "^0.1.1",
     "string-similarity": "^1.0.0",
     "uuid": "^2.0.1",
