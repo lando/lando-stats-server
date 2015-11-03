@@ -1,5 +1,5 @@
 report:
   container_name: report1
-  image: kalabox/kalabox-stats-server-report:latest
+  image: kalabox/stats-server-report:latest
   volumes:
     - /home/ubuntu/data/stats:/code
