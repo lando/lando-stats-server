@@ -10,10 +10,18 @@ var email = require('./email.js');
 
 var app = express();
 
+function log(s) {
+  var msg = [
+    new Date().toISOString(),
+    s
+  ].join(': ');
+  console.log(msg);
+}
+
 app.get('/status/', function(req, res, next) {
   var data = {status: 'OK'};
   res.json(data);
-  console.log('RESPONSE: ' + JSON.stringify(data));
+  log('RESPONSE: ' + JSON.stringify(data));
 });
 
 var startupDelay = config.monitor.startupDelay * 1000 || 60 * 1000;
@@ -23,7 +31,7 @@ Promise.fromNode(function(cb) {
   app.listen(config.monitor.port, cb);
 })
 .then(function() {
-  console.log('listening on port: ' + config.monitor.port);
+  log('listening on port: ' + config.monitor.port);
 })
 .delay(startupDelay)
 .then(function() {
@@ -48,11 +56,11 @@ Promise.fromNode(function(cb) {
       })
       .timeout(10 * 1000)
       .then(function(data) {
-        console.log('OK: ' + target + ' --> ' + JSON.stringify(data));
+        log('OK: ' + target + ' --> ' + JSON.stringify(data));
       })
       .catch(function(err) {
         var err2 = new VError(err, 'Failed status check of target: ' + target);
-        console.log('ERROR: ' + JSON.stringify(err2));
+        log('ERROR: ' + JSON.stringify(err2));
         var subject = 'Status Check Failure: ' + target;
         var text = JSON.stringify(err2, null, '  ');
         return email.send(subject, text);
