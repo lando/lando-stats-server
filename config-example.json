@@ -5,5 +5,13 @@
     "to": "info@info.com"
   },
   "db": "mongodb://db.stats.kbox:27017",
-  "web": "http://stats.kbox:80"
+  "web": "http://stats.kbox:80",
+  "monitor": {
+    "interval": "3600",
+    "startupDelay": "300",
+    "port": "8001",
+    "targets": [
+      "http://localhost:8002/status/"
+    ]
+  }
 }

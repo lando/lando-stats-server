@@ -83,6 +83,13 @@ app.get('/', function(req, res, next) {
   next();
 });
 
+/*
+ * Response to status checks.
+ */
+app.get('/status/', function(req, res) {
+  res.json({status: 'OK'});
+});
+
 var authenticate = function() {
   return passport.authenticate('basic', {session: false});
 };

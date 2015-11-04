@@ -29,6 +29,7 @@
     "passport": "^0.2.2",
     "passport-http": "^0.2.2",
     "promise-streams": "^0.2.7",
+    "restler": "^3.4.0",
     "retry-bluebird": "^0.1.1",
     "string-similarity": "^1.0.0",
     "uuid": "^2.0.1",
