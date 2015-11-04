@@ -11,7 +11,9 @@ var email = require('./email.js');
 var app = express();
 
 app.get('/status/', function(req, res, next) {
-  res.json({status: 'OK'});
+  var data = {status: 'OK'};
+  res.json(data);
+  console.log('RESPONSE: ' + JSON.stringify(data));
 });
 
 var startupDelay = config.monitor.startupDelay * 1000 || 60 * 1000;
