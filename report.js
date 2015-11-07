@@ -42,6 +42,7 @@ var state = {
   startDate: startDate.format('YYYY-MM-DD'),
   endDate: endDate.format('YYYY-MM-DD'),
   dates: {},
+  uniqueIds: {},
   version: {},
   osInfo: {}
 };
@@ -56,6 +57,10 @@ _.each(datesBetween(startDate, endDate), function(date) {
 process.stdin
 // Transform to json objects.
 .pipe(JSONStream.parse('records.*'))
+// Filter out records without meta data.
+.pipe(ps.filter(function(data) {
+  return !!data.metaData;
+}))
 // Map meta data records each to a new data record.
 .pipe(ps.map(function(data) {
   /*
@@ -85,6 +90,11 @@ process.stdin
     if (_.contains(['start', 'stop'], action)) {
       // Add activity to state.
       state.dates[keyDate][keyId] = true;
+      // Add unique id data.
+      if (!state.uniqueIds[keyId]) {
+        state.uniqueIds[keyId] = 0;
+      }
+      state.uniqueIds[keyId] += 1;
       // Add os info to state.
       var os = data.metaData.data.os;
       if (!state.osInfo[os.type]) {
@@ -131,6 +141,8 @@ process.stdin
     startDate: state.startDate,
     endDate: state.endDate
   };
+  // Report unique users.
+  report.uniqueUsers = _.keys(state.uniqueIds).length;
   // Report active users.
   report.activeUsersByDate = _.mapValues(state.dates, function(o, date) {
     return _.keys(o).length;
