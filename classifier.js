@@ -11,7 +11,7 @@ function Classifier(threshold) {
   // Init empty group array.
   this.groups = [];
   // Set threshold, or use default threshold.
-  this.threshold = threshold || 0.4;
+  this.threshold = threshold || 0.6;
 
 }
 
