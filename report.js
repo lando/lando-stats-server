@@ -8,11 +8,32 @@ var classifier = require('./classifier.js')();
 var JSONStream = require('JSONStream');
 var ps = require('promise-streams');
 var yargs = require('yargs');
+var exec = require('child_process').exec;
 
 var argv = yargs.argv;
 var reportLength = argv.d || 30;
 var endDate = moment();
 var startDate = moment(endDate).subtract(reportLength - 1, 'days');
+
+/*
+ * Returns the latest version of kalabox.
+ */
+var version = _.once(function() {
+  // Query npm for info on kalabox package.
+  return Promise.fromNode(function(cb) {
+    exec('npm info kalabox --json', function(err, stdout, stderr) {
+      cb(err, stdout);
+    });
+  })
+  // Parse json data.
+  .then(function(data) {
+    return JSON.parse(data);
+  })
+  // Return version.
+  .then(function(data) {
+    return data.version;
+  });
+});
 
 /*
  * Returns a list of dates between start and end dates.
@@ -86,53 +107,56 @@ process.stdin
 })
 // Use the data to build a report.
 .map(function(datas) {
-  return Promise.each(datas, function(data) {
-    var action = data.metaData.data.action;
-    var keyDate = moment(data.metaData.created).format('YYYY-MM-DD');
-    var keyId = data._id;
-    if (_.contains(['start', 'stop'], action)) {
-      // Add activity to state.
-      state.dates[keyDate][keyId] = true;
-      // Add unique id data.
-      if (!state.uniqueIds[keyId]) {
-        state.uniqueIds[keyId] = 0;
+  return version()
+  .then(function(latestVersion) {
+    return Promise.each(datas, function(data) {
+      var action = data.metaData.data.action;
+      var keyDate = moment(data.metaData.created).format('YYYY-MM-DD');
+      var keyId = data._id;
+      if (action !== 'error') {
+        // Add activity to state.
+        state.dates[keyDate][keyId] = true;
+        // Add unique id data.
+        if (!state.uniqueIds[keyId]) {
+          state.uniqueIds[keyId] = 0;
+        }
+        state.uniqueIds[keyId] += 1;
+        // Add os info to state.
+        var os = data.metaData.data.os;
+        if (!state.osInfo[os.type]) {
+          state.osInfo[os.type] = {};
+        }
+        if (!state.osInfo[os.type][os.platform]) {
+          state.osInfo[os.type][os.platform] = {};
+        }
+        if (!state.osInfo[os.type][os.platform][os.release]) {
+          state.osInfo[os.type][os.platform][os.release] = 0;
+        }
+        state.osInfo[os.type][os.platform][os.release] += 1;
+        // Add kbox version info to state.
+        var version = data.metaData.data.version.split('.');
+        var major = version[0];
+        var minor = version[1];
+        var patch = version[2];
+        if (!state.version[major]) {
+          state.version[major] = {};
+        }
+        if (!state.version[major][minor]) {
+          state.version[major][minor] = {};
+        }
+        if (!state.version[major][minor][patch]) {
+          state.version[major][minor][patch] = 0;
+        }
+        state.version[major][minor][patch] += 1;
+      } else if (action === 'error') {
+        // Classify all error actions.
+        if (!data.metaData.data.message) {
+          //throw new Error(JSON.stringify(data, null, '  '));
+        } else if (data.metaData.data.version === latestVersion) {
+          classifier.classify(data.metaData.data.message, keyId);
+        }
       }
-      state.uniqueIds[keyId] += 1;
-      // Add os info to state.
-      var os = data.metaData.data.os;
-      if (!state.osInfo[os.type]) {
-        state.osInfo[os.type] = {};
-      }
-      if (!state.osInfo[os.type][os.platform]) {
-        state.osInfo[os.type][os.platform] = {};
-      }
-      if (!state.osInfo[os.type][os.platform][os.release]) {
-        state.osInfo[os.type][os.platform][os.release] = 0;
-      }
-      state.osInfo[os.type][os.platform][os.release] += 1;
-      // Add kbox version info to state.
-      var version = data.metaData.data.version.split('.');
-      var major = version[0];
-      var minor = version[1];
-      var patch = version[2];
-      if (!state.version[major]) {
-        state.version[major] = {};
-      }
-      if (!state.version[major][minor]) {
-        state.version[major][minor] = {};
-      }
-      if (!state.version[major][minor][patch]) {
-        state.version[major][minor][patch] = 0;
-      }
-      state.version[major][minor][patch] += 1;
-    } else if (action === 'error') {
-      // Classify all error actions.
-      if (!data.metaData.data.message) {
-        //throw new Error(JSON.stringify(data, null, '  '));
-      } else {
-        classifier.classify(data.metaData.data.message, keyId);
-      }
-    }
+    });
   });
 })
 // Wait for end of stream.
