@@ -13,4 +13,4 @@ EXPOSE 80
 
 ADD ./start.sh /start.sh
 
-CMD ["/start.sh"]
+ENTRYPOINT ["/start.sh"]
