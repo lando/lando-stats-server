@@ -78,7 +78,10 @@ process.stdin
 .map(function(datas) {
   return Promise.filter(datas, function(data) {
     var ts = moment(data.metaData.created);
-    return ts.isBetween(startDate, endDate);
+    return ts.isBetween(
+      startDate.startOf('day'),
+      endDate.endOf('day')
+    );
   });
 })
 // Use the data to build a report.
