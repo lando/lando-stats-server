@@ -1,0 +1,8 @@
+web:
+  container_name: web1
+  build: ./
+#  image: kalabox/stats-server-node:latest
+  ports:
+    - 80:80
+  environment:
+    - KALABOX_METRICS_REST_SLOT
