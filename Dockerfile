@@ -7,6 +7,12 @@ RUN apt-get update && \
 
 RUN chmod +x /usr/bin/node
 
+RUN mkdir /src
+
+ADD ./* /src/
+
+RUN cd /src && npm install
+
 EXPOSE 80
 
-CMD ["/usr/bin/node", "server.js"]
+CMD ["/usr/bin/node", "/src/server.js"]

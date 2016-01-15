@@ -2,7 +2,7 @@
 
 var elastic = require('elasticsearch');
 var Promise = require('bluebird');
-var config = require('./config/');
+var config = require(process.env['KALABOX_CONFIG_PATH']);
 var util = require('util');
 var VError = require('verror');
 

@@ -4,7 +4,7 @@ var _ = require('lodash');
 var express = require('express');
 var bodyParser = require('body-parser');
 var Promise = require('bluebird');
-var config = require('./config/');
+var config = require(process.env['KALABOX_CONFIG_PATH']);
 var Db = require('./elastic.js');
 
 /*
@@ -107,7 +107,7 @@ app.post('/metrics/v2/:id', handle(function(req, res) {
 
 // Load config slot.
 return config.load({
-  slot: process.env['KALABOX_METRICS_REST_SLOT']
+  slot: process.env['KALABOX_CONFIG_SLOT_METRICS_REST']
 })
 // Start listening.
 .then(function() {
