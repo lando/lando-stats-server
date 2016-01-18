@@ -97,10 +97,9 @@ app.get('/status', handle(function(req, res) {
  */
 app.post('/metrics/v2/:id', handle(function(req, res) {
   return Promise.using(db(), function(db) {
-    return db.insert({
-      instance: req.params.id,
-      data: req.body
-    });
+    var data = req.body;
+    data.instance = req.params.id;
+    return db.insert(data);
   })
   .return({status: 'OK'});
 }));
