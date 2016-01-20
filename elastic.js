@@ -59,8 +59,8 @@ Db.prototype.insert = function(doc) {
   // Insert document into cluster.
   return Promise.fromNode(function(cb) {
     var data = {
-      index: self.index,
-      type: self.type,
+      index: self.opts.index,
+      type: self.opts.type,
       body: doc 
     };
     self.client.index(data, cb);
