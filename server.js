@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 var Promise = require('bluebird');
 var config = require(process.env['KALABOX_CONFIG_PATH']);
 var Db = require('./elastic.js');
+var VError = require('verror');
 
 /*
  * Create app.
