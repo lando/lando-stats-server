@@ -95,7 +95,7 @@ app.get('/status', handle(function(req, res) {
 /*
  * Post new meta data for metrics.
  */
-app.post('/metrics/action/:id', handle(function(req, res) {
+app.post('/metrics/v2/:id', handle(function(req, res) {
   return Promise.using(db(), function(db) {
     var data = req.body;
     data.instance = req.params.id;
