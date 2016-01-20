@@ -1,6 +1,6 @@
 {
   "name": "kalabox-stats-server",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Anonymous user stats REST API service.",
   "keywords": [
     "kalabox"
