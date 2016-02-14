@@ -1,6 +1,6 @@
 {
   "name": "kalabox-stats-server",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Anonymous user stats REST API service.",
   "keywords": [
     "kalabox"
@@ -18,10 +18,11 @@
   "dependencies": {
     "bluebird": "^3.1.1",
     "body-parser": "^1.14.2",
+    "bugsnag": "^1.7.0",
+    "elasticsearch": "~10.1.2",
     "express": "^4.13.3",
     "lodash": "~4.0.0",
-    "verror": "^1.6.0",
-    "elasticsearch": "~10.1.2"
+    "verror": "^1.6.0"
   },
   "devDependencies": {}
 }

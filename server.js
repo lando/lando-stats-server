@@ -26,6 +26,13 @@ function log() {
 }
 
 /*
+ * Lazy load bugsnag module.
+ */
+var bugsnag = _.once(function() {
+  return require('./bugsnag.js')(config.db.bugsnag);
+});
+
+/*
  * Pretty print function.
  */
 function pp(obj) {
@@ -97,11 +104,18 @@ app.get('/status', handle(function(req, res) {
  * Post new meta data for metrics.
  */
 app.post('/metrics/v2/:id', handle(function(req, res) {
-  return Promise.using(db(), function(db) {
-    var data = req.body;
-    data.instance = req.params.id;
-    return db.insert(data);
-  })
+
+  var data = req.body;
+  data.instance = req.params.id;
+
+  return Promise.all([
+    // Insert into database.
+    Promise.using(db(), function(db) {
+      return db.insert(data);
+    }),
+    // Report to bugsnag.
+    bugsnag().report(data)
+  ])
   .return({status: 'OK'});
 }));
 
