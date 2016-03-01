@@ -1,6 +1,6 @@
 web:
   container_name: web1
-  image: kalabox/metrics-rest:v0.2.6
+  image: kalabox/metrics-rest:v0.2.7
   ports:
     - 80:80
   environment:
