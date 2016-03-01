@@ -6,15 +6,26 @@ var VError = require('verror');
 
 module.exports = function(opts) {
 
-  // Register bug snag api from config.
-  bugsnag.register(opts.apiKey);
-
   // Report error data.
   function report(data) {
+
     // Run inside of a promise context.
     return Promise.try(function() {
       // Only report errors.
       if (data.action === 'error') {
+
+        // Get app version and remove trailing '-dev'.
+        var appVersion = data.version.replace(/-dev$/, '');
+
+        // Get release stage based on devMode.
+        var releaseStage = data.devMode ? 'development' : 'production';
+
+        // Register bug snag api from config.
+        bugsnag.register(opts.apiKey, {
+          appVersion: appVersion,
+          releaseStage: releaseStage
+        });
+
         // Create a new error with err message.
         var err = new Error(data.message);
         // Add stack trace.
