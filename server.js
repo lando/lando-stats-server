@@ -4,9 +4,18 @@ var _ = require('lodash');
 var express = require('express');
 var bodyParser = require('body-parser');
 var Promise = require('bluebird');
-var config = require(process.env['KALABOX_CONFIG_PATH']);
 var Db = require('./elastic.js');
 var VError = require('verror');
+
+// Init config from environment.
+var config = {
+  port: process.env['KALABOX_METRICS_PORT'],
+  timeout: process.env['KALABOX_METRICS_TIMEOUT'],
+  db: {
+    bugsnag: JSON.parse(process.env['KALABOX_METRICS_BUGSNAG']),
+    elastic: JSON.parse(process.env['KALABOX_METRICS_ELASTIC'])
+  }
+};
 
 /*
  * Create app.
@@ -47,7 +56,7 @@ function db() {
   var instance = null;
   // Create db connection.
   return Promise.try(function() {
-    instance = new Db(config.slot.database);
+    instance = new Db(config.db.elastic);
     return instance;
   })
   // Wrap errors.
@@ -55,7 +64,7 @@ function db() {
     throw new VError(
       err,
       'Error connecting to database: %s',
-      pp(config.slot.database)
+      pp(config.db.elastic)
     );
   })
   // Make sure to close connection.
@@ -75,7 +84,7 @@ function handle(fn) {
     // Call fn in context of a promise.
     return Promise.try(fn, [req, res])
     // Make sure we have a timeout.
-    .timeout(config.slot.timeout || 10 * 1000)
+    .timeout(config.timeout || 10 * 1000)
     // Handler failure.
     .catch(function(err) {
       console.log(err.message);
@@ -119,17 +128,11 @@ app.post('/metrics/v2/:id', handle(function(req, res) {
   .return({status: 'OK'});
 }));
 
-// Load config slot.
-return config.load({
-  slot: process.env['KALABOX_CONFIG_SLOT_METRICS_REST']
-})
 // Start listening.
+var port = config.port;
+return Promise.fromNode(function(cb) {
+  app.listen(port, cb);
+})
 .then(function() {
-  var port = config.slot.server.port;
-  return Promise.fromNode(function(cb) {
-    app.listen(port, cb);
-  })
-  .then(function() {
-    log('Listening on port: %s', port);
-  });
+  log('Listening on port: %s', port);
 });
