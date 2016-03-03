@@ -106,7 +106,9 @@ function handle(fn) {
  * Respond to status pings.
  */
 app.get('/status', handle(function(req, res) {
-  return {status: 'OK'};
+  var result = {status: 'OK'};
+  log(JSON.stringify(result));
+  return result;
 }));
 
 /*
