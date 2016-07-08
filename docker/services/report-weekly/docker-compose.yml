@@ -1,6 +1,0 @@
-report:
-  container_name: report-weekly1
-  command: /start.sh 7
-  image: kalabox/stats-server-report:latest
-  volumes:
-    - /home/ubuntu/data/stats:/code

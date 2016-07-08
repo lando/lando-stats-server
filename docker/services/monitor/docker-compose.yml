@@ -1,7 +1,0 @@
-report:
-  container_name: monitor1
-  image: kalabox/stats-server-monitor:latest
-  volumes:
-    - /home/ubuntu/data/stats:/code
-  ports:
-    - 8001:8001

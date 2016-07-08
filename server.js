@@ -1,173 +1,140 @@
 'use strict';
 
 var _ = require('lodash');
-var bodyParser = require('body-parser');
 var express = require('express');
-var metricsDb = require('./metricsDb.js');
+var bodyParser = require('body-parser');
 var Promise = require('bluebird');
-var uuid = require('uuid');
+var Db = require('./elastic.js');
 var VError = require('verror');
-var url = require('url');
-var config = require('./config.json');
-var shared = require('./shared.js');
-var passport = require('passport');
-var BasicStrategy = require('passport-http').BasicStrategy;
 
-/*
- * Verify the admin login.
- */
-var verifyAdminLogin = function(user, password, next) {
-  if (user === config.adminUser && password === config.adminPassword) {
-    next(null, user);
-  } else {
-    next(null, false, {message: 'Incorrect login'});
+// Init config from environment.
+var config = {
+  port: process.env['KALABOX_METRICS_PORT'],
+  timeout: process.env['KALABOX_METRICS_TIMEOUT'],
+  db: {
+    bugsnag: JSON.parse(process.env['KALABOX_METRICS_BUGSNAG']),
+    elastic: JSON.parse(process.env['KALABOX_METRICS_ELASTIC'])
   }
-
 };
 
 /*
- * Setup passport to use basic authentication for admin login.
- */
-passport.use(new BasicStrategy(verifyAdminLogin));
-
-/*
- * Create express app.
+ * Create app.
  */
 var app = express();
 
 /*
- * Add a body parser, so we can parse post bodies.
+ * Use json body parser plugin.
  */
 app.use(bodyParser.json());
 
 /*
- * Add passport to express app.
- */
-app.use(passport.initialize());
-
-/*
  * Logging function.
  */
-var log = function(msg) {
-  console.log('HTTP: ' + msg);
-};
+function log() {
+  return console.log.apply(this, _.toArray(arguments));
+}
 
 /*
- * Take a promise and monitor it's completion.
+ * Lazy load bugsnag module.
  */
-var monitorTask = function(prm, res) {
+var bugsnag = _.once(function() {
+  return require('./bugsnag.js')(config.db.bugsnag);
+});
 
-  // Wait for promise to finsish.
-  return prm
-  // Set a timeout.
-  .timeout(10 * 1000)
-  // Respond to request.
-  .then(function(data) {
-    log('response -> ' + shared.pp(data));
-    res.json(data);
+/*
+ * Pretty print function.
+ */
+function pp(obj) {
+  return JSON.stringify(obj);
+}
+
+/*
+ * Get a db connection, will dispose itself.
+ */
+function db() {
+  // Use this ref for disposing.
+  var instance = null;
+  // Create db connection.
+  return Promise.try(function() {
+    instance = new Db(config.db.elastic);
+    return instance;
   })
-  // Handle errors with status code 500 and error message.
+  // Wrap errors.
   .catch(function(err) {
-    log('error -> ' + shared.pp(err));
-    var data = {error: err.message};
-    res.status(500).json(data);
+    throw new VError(
+      err,
+      'Error connecting to database: %s',
+      pp(config.db.elastic)
+    );
+  })
+  // Make sure to close connection.
+  .disposer(function() {
+    if (instance) {
+      instance.close();
+    }
   });
-
 };
 
 /*
- * Handle all incoming requests.
+ * Helper function for mapping promise to response.
  */
-app.get('/', function(req, res, next) {
-  // @todo: @bcauldwell - Add logging.
-  next();
-});
-
-/*
- * Response to status checks.
- */
-app.get('/status/', function(req, res) {
-  res.json({status: 'OK'});
-});
-
-var authenticate = function() {
-  return passport.authenticate('basic', {session: false});
-};
-
-/*
- * Handle getAll request.
- */
-app.get('/metrics/v1/admin/',
-passport.authenticate('basic', {session: false}),
-function(req, res) {
-
-  // Get all from db.
-  var prm = metricsDb.getAll(function(stream) {
-    // Pipe records to response.
-    return Promise.fromNode(function(cb) {
-      var ids = [];
-      stream.on('data', function(record) {
-        ids.push(record._id);
-      });
-      stream.on('end', function() {
-        var result = {
-          ids: ids
-        };
-        cb(null, result);
-      });
+function handle(fn) {
+  // Returns a handler function.
+  return function(req, res) {
+    // Call fn in context of a promise.
+    return Promise.try(fn, [req, res])
+    // Make sure we have a timeout.
+    .timeout(config.timeout || 10 * 1000)
+    // Handler failure.
+    .catch(function(err) {
+      console.log(err.message);
+      console.log(err.stack);
+      res.status(500);
+      res.json({status: {err: 'Unexected server error.'}})
+      res.end();
+    })
+    // Handle success.
+    .then(function(data) {
+      res.status(200);
+      res.json(data);
+      res.end();
     });
-  });
-  monitorTask(prm, res);
-
-});
+  };
+}
 
 /*
- * Handle get request.
+ * Respond to status pings.
  */
-app.get('/metrics/v1/admin/:id',
-passport.authenticate('basic', {session: false}),
-function(req, res) {
-
-  // Get record from db.
-  var prm = metricsDb.get(req.params.id);
-  monitorTask(prm, res);
-
-});
+app.get('/status', handle(function(req, res) {
+  var result = {status: 'OK'};
+  log(JSON.stringify(result));
+  return result;
+}));
 
 /*
- * Handle create request.
+ * Post new meta data for metrics.
  */
-app.post('/metrics/v1/', function(req, res) {
+app.post('/metrics/v2/:id', handle(function(req, res) {
 
-  // Have db create a new record.
-  var prm = metricsDb.create();
-  monitorTask(prm, res);
+  var data = req.body;
+  data.instance = req.params.id;
 
-});
-
-/*
- * Handle append request.
- */
-app.put('/metrics/v1/:id', function(req, res) {
-
-  // ID param.
-  var id = req.params.id;
-
-  // Meta data from request body.
-  var metaData = req.body;
-
-  // Append meta data record to record.
-  var prm = metricsDb.append(id, metaData);
-  monitorTask(prm, res);
-
-});
+  return Promise.all([
+    // Insert into database.
+    Promise.using(db(), function(db) {
+      return db.insert(data);
+    }),
+    // Report to bugsnag.
+    bugsnag().report(data)
+  ])
+  .return({status: 'OK'});
+}));
 
 // Start listening.
-// @todo: @bcauldwell - We need to change the port to something better.
-var port = url.parse(config.web).port;
-Promise.fromNode(function(cb) {
+var port = config.port;
+return Promise.fromNode(function(cb) {
   app.listen(port, cb);
 })
 .then(function() {
-  log('Listening on port: ' + port);
+  log('Listening on port: %s', port);
 });

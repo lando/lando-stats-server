@@ -1,6 +1,0 @@
-report:
-  container_name: report-daily1
-  command: /start.sh 1
-  image: kalabox/stats-server-report:latest
-  volumes:
-    - /home/ubuntu/data/stats:/code
