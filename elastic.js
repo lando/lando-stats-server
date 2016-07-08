@@ -14,14 +14,7 @@ function Db(opts) {
   this.index = opts.index;
   this.type = opts.type;
   // Build host url.
-  this.host = util.format(
-    '%s://%s:%s@%s:%s',
-    opts.transport,
-    opts.username,
-    opts.password,
-    opts.host,
-    opts.port
-  );
+  this.host = opts.host;
   // Create client.
   this.client = elastic.Client({
     host: this.host

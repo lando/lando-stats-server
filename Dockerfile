@@ -1,7 +1,7 @@
-FROM kalabox/debian:stable
+FROM debian:stable
 
-RUN apt-get update && \
-    apt-get install curl && \
+RUN apt-get update -y && \
+    apt-get install curl -y && \
     curl -sL https://deb.nodesource.com/setup | bash - && \
     apt-get install -y nodejs
 
