@@ -1,0 +1,19 @@
+name: metrics
+recipe: mean
+config:
+  node: '6.10'
+  command: npm start
+  globals:
+    grunt-cli: latest
+events:
+  pre-push:
+    - appserver: grunt test
+tooling:
+  grunt:
+    service: appserver
+  push:
+    cmd:
+      - git
+      - push
+    description: Push new code into QA
+    service: appserver

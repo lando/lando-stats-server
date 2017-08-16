@@ -53,7 +53,7 @@ Db.prototype.insert = function(doc) {
     var data = {
       index: self.index,
       type: self.type,
-      body: doc 
+      body: doc
     };
     self.client.index(data, cb);
   })
