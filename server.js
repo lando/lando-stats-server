@@ -44,6 +44,9 @@ var getConfig = function() {
       });
     }
 
+    // Set the port
+    config.LANDO_METRICS_PORT = pconfig.port;
+
   }
 
   // Make sure we JSON parse relevant config
@@ -151,7 +154,7 @@ app.get('/status', handle(function(req, res) {
 }));
 
 /*
- * Respond to status pings.
+ * Sanity check.
  */
 app.get('/', handle(function(req, res) {
   var result = {status: 'THING'};

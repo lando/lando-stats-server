@@ -1,0 +1,19 @@
+https://{default}/:
+  type: upstream
+  redirects:
+    expires: -1s
+    paths: {}
+  cache:
+    enabled: true
+    default_ttl: 0
+    cookies:
+    - '*'
+    headers:
+    - Accept
+    - Accept-Language
+  ssi:
+    enabled: false
+  upstream: metrics:http
+https://stats-v2.kalabox.io/:
+  type: redirect
+  to: https://{default}/
