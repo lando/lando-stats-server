@@ -18,21 +18,6 @@ module.exports = function(grunt) {
       }
     },
 
-    // This handles automatic version bumping in travis
-    bump: {
-      options: {
-        files: ['package.json'],
-        updateConfigs: [],
-        commit: true,
-        commitMessage: 'Release v%VERSION%',
-        commitFiles: ['package.json', 'bower.json'],
-        createTag: true,
-        tagName: 'v%VERSION%',
-        tagMessage: 'Version %VERSION%',
-        push: false
-      }
-    },
-
     // Some linting and code standards
     jshint: {
       options: {
@@ -66,10 +51,6 @@ module.exports = function(grunt) {
   //--------------------------------------------------------------------------
   // SETUP WORKFLOWS
   //--------------------------------------------------------------------------
-
-  grunt.registerTask('bump-patch', [
-    'bump-only:patch'
-  ]);
 
   grunt.registerTask('test', [
     'jshint',

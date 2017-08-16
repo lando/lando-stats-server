@@ -2,25 +2,64 @@
 
 var _ = require('lodash');
 var express = require('express');
+var app = express();
 var bodyParser = require('body-parser');
 var Promise = require('bluebird');
 var Db = require('./elastic.js');
 var VError = require('verror');
 
-// Init config from environment.
-var config = {
-  port: process.env['KALABOX_METRICS_PORT'],
-  timeout: process.env['KALABOX_METRICS_TIMEOUT'],
-  db: {
-    bugsnag: JSON.parse(process.env['KALABOX_METRICS_BUGSNAG']),
-    elastic: JSON.parse(process.env['KALABOX_METRICS_ELASTIC'])
+/*
+ * Helper to load the config
+ */
+var getConfig = function() {
+
+  // Start with defualts
+  var config = {
+    'LANDO_METRICS_PORT': 80,
+    'LANDO_METRICS_TIMEOUT': 10000,
+    'LANDO_METRICS_BUGSNAG': {},
+    'LANDO_METRICS_ELASTIC': {}
+  };
+
+  // Merge in .env file
+  require('dotenv').config();
+
+  // Merge in process.env as relevant
+  _.forEach(_.keys(config), function(key) {
+    if (_.has(process.env, key)) {
+      config[key] = process.env[key];
+    }
+  });
+
+  // Merge in platformsh stuff
+  if (!_.isEmpty(process.env.PLATFORM_ENVIRONMENT)) {
+
+    // Get platform config
+    var pconfig = require('platformsh').config();
+
+    // Load in platform vars
+    if (!_.isEmpty(pconfig.variables)) {
+      _.forEach(pconfig.variables, function(value, key) {
+        config[key] = value;
+      });
+    }
+
   }
+
+  // Make sure we JSON parse relevant config
+  _.forEach(['LANDO_METRICS_BUGSNAG', 'LANDO_METRICS_ELASTIC'], function(key) {
+    if (typeof config[key] === 'string') {
+      config[key] = JSON.parse(config[key]);
+    }
+  });
+
+  // Return config
+  return config;
+
 };
 
-/*
- * Create app.
- */
-var app = express();
+// Load .env file
+require('dotenv').config();
 
 /*
  * Use json body parser plugin.
@@ -38,7 +77,7 @@ function log() {
  * Lazy load bugsnag module.
  */
 var bugsnag = _.once(function() {
-  return require('./bugsnag.js')(config.db.bugsnag);
+  return require('./bugsnag.js')(getConfig().LANDO_METRICS_BUGSNAG);
 });
 
 /*
@@ -56,7 +95,7 @@ function db() {
   var instance = null;
   // Create db connection.
   return Promise.try(function() {
-    instance = new Db(config.db.elastic);
+    instance = new Db(getConfig().LANDO_METRICS_ELASTIC);
     return instance;
   })
   // Wrap errors.
@@ -64,7 +103,7 @@ function db() {
     throw new VError(
       err,
       'Error connecting to database: %s',
-      pp(config.db.elastic)
+      pp(getConfig().LANDO_METRICS_ELASTIC)
     );
   })
   // Make sure to close connection.
@@ -73,7 +112,7 @@ function db() {
       instance.close();
     }
   });
-};
+}
 
 /*
  * Helper function for mapping promise to response.
@@ -84,13 +123,13 @@ function handle(fn) {
     // Call fn in context of a promise.
     return Promise.try(fn, [req, res])
     // Make sure we have a timeout.
-    .timeout(config.timeout || 10 * 1000)
+    .timeout(getConfig().LANDO_METRICS_TIMEOUT || 10 * 1000)
     // Handler failure.
     .catch(function(err) {
       console.log(err.message);
       console.log(err.stack);
       res.status(500);
-      res.json({status: {err: 'Unexected server error.'}})
+      res.json({status: {err: 'Unexected server error.'}});
       res.end();
     })
     // Handle success.
@@ -107,6 +146,15 @@ function handle(fn) {
  */
 app.get('/status', handle(function(req, res) {
   var result = {status: 'OK'};
+  log(JSON.stringify(result));
+  return result;
+}));
+
+/*
+ * Respond to status pings.
+ */
+app.get('/', handle(function(req, res) {
+  var result = {status: 'THING'};
   log(JSON.stringify(result));
   return result;
 }));
@@ -130,11 +178,9 @@ app.post('/metrics/v2/:id', handle(function(req, res) {
   .return({status: 'OK'});
 }));
 
-// Start listening.
-var port = config.port;
-return Promise.fromNode(function(cb) {
-  app.listen(port, cb);
+Promise.fromNode(function(cb) {
+  app.listen(getConfig().LANDO_METRICS_PORT, cb);
 })
 .then(function() {
-  log('Listening on port: %s', port);
+  log('Listening on port: %s', getConfig().LANDO_METRICS_PORT);
 });

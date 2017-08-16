@@ -1,28 +1,41 @@
 {
-  "name": "kalabox-stats-server",
-  "version": "0.2.8",
+  "name": "lando-stats-server",
+  "version": "0.3.0",
   "description": "Anonymous user stats REST API service.",
   "keywords": [
     "kalabox"
   ],
+  "scripts": {
+    "test": "grunt test",
+    "start": "./node_modules/nodemon/bin/nodemon.js server.js"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kalabox/kalabox-stats-server"
+    "url": "https://github.com/kalabox/lando-stats-server"
   },
   "bugs": {
-    "email": "riley@kalabox.io",
-    "url": "http://github.com/kalabox/kalabox-stats-server"
+    "email": "mike@kalabox.io",
+    "url": "http://github.com/kalabox/lando-stats-server"
   },
-  "author": "riley@kalabox.io",
+  "author": "mike@kalabox.io",
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.1.1",
     "body-parser": "^1.14.2",
     "bugsnag": "^1.7.0",
+    "dotenv": "^4.0.0",
     "elasticsearch": "~10.1.2",
     "express": "^4.13.3",
     "lodash": "~4.0.0",
+    "nodemon": "^1.11.0",
+    "platformsh": "^1.0.0",
     "verror": "^1.6.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "~1.1.0",
+    "grunt-jscs": "~0.8.1",
+    "jshint-stylish": "~1.0.0",
+    "matchdep": "^0.3.0"
+  }
 }

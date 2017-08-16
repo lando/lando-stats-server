@@ -1,23 +1,56 @@
-## Testing
+Lando Metrics Server
+====================
 
-1. Build the image locally:
+Lightweight node server that powers Lando metrics.
 
-docker build -t kalabox/metrics-rest .
+Local Development
+-----------------
 
-2. Create environmental variables to hook it up to Bugsnag and Elasticsearch
-instances by saving a file "env" with credentials:
+### Installing
+
+Local development requires [lando](https://docs.lndo.io).
+
+```bash
+# Clone the site
+git clone https://github.com/kalabox/lando-stats-server.git
+cd lando-stats-server
+lando npm install
+```
+
+### Configuration
+
+You'll want to drop a `.env` file in the root of this repo with the relevant creds.
+
+```bash
+LANDO_METRICS_PORT=7000
+LANDO_METRICS_TIMEOUT=100000
+LANDO_METRICS_BUGSNAG={}
+LANDO_METRICS_ELASTIC={}
+```
+
+### Running Site Locally
 
 ```
-KALABOX_METRICS_ELASTIC={"host":"INSERT HOSET","index":"INDXE","type":"action"}
-KALABOX_METRICS_BUGSNAG={"apiKey":"APIKEY"}
-KALABOX_METRICS_PORT=80
+# Boot up with lando
+# NOTE: order is weird here because of bower
+lando start
 ```
 
-3. Run the container:
+Testing
+-------
 
-`docker run -p 8080:80 --env-file=env kalabox/metrics-rest`
+```bash
+lando grunt test
+```
 
-4. Run some test queries/insert test entries:
+Deploying
+---------
 
-localhost:8080/status
+Using [GitHub Flow](https://guides.github.com/introduction/flow/) push a branch to this project and open a pull request. If tests pass and the pull request is accepted the change is automatically deployed.
 
+```bash
+git checkout -b ISSUESNUMBER-ISSUEDESCRIPITON
+git add -A
+git commit -m "#ISSUENUMBER: COMMIT DESCRIPTION"
+lando push origin ISSUESNUMBER-ISSUEDESCRIPITON
+```
