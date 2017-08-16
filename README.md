@@ -32,7 +32,6 @@ LANDO_METRICS_ELASTIC={}
 
 ```
 # Boot up with lando
-# NOTE: order is weird here because of bower
 lando start
 ```
 
