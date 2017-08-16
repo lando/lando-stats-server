@@ -39,6 +39,7 @@ Testing
 -------
 
 ```bash
+# Things
 lando grunt test
 ```
 
