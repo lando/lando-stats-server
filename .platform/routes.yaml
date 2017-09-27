@@ -1,3 +1,24 @@
+http://metrics.lndo.io/:
+  type: redirect
+  to: http://{default}/
+https://metrics.lndo.io/:
+  type: redirect
+  to: https://{default}/
+http://stats.lndo.io/:
+  type: redirect
+  to: http://{default}/
+https://stats.lndo.io/:
+  type: redirect
+  to: https://{default}/
+http://stats.devwithlando.io/:
+  type: redirect
+  to: http://{default}/
+https://stats.devwithlando.io/:
+  type: redirect
+  to: https://{default}/
+https://stats-v2.kalabox.io/:
+  type: redirect
+  to: https://{default}/
 https://{default}/:
   type: upstream
   redirects:
@@ -14,6 +35,3 @@ https://{default}/:
   ssi:
     enabled: false
   upstream: metrics:http
-https://stats-v2.kalabox.io/:
-  type: redirect
-  to: https://{default}/
