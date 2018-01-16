@@ -29,5 +29,9 @@ hooks:
   build: |
     npm install
     curl -sS https://platform.sh/cli/installer | php
-    echo "updates:" >> /app/.platformsh/config.yaml
-    echo "check: false" >> /app/.platformsh/config.yaml
+
+crons:
+  snapshot:
+    spec: '*/5 * * * *'
+    cmd: |
+      platform vset redeploy "$(date)" --no-wait
