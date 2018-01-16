@@ -5,8 +5,6 @@ dependencies:
   nodejs:
     pm2: "^2.0.0"
     grunt-cli: "latest"
-  php:
-    wizaplace/php-fpm-status-cli: "^1.0"
 
 web:
   commands:
