@@ -21,6 +21,7 @@ web:
 
 mounts:
   "/run": "shared:files/run"
+  "/.platformsh": "shared:files/.platformsh"
 
 disk: 512
 
@@ -28,5 +29,3 @@ hooks:
   build: |
     npm install
     curl -sS https://platform.sh/cli/installer | php
-    echo "updates:" >> /app/.platformsh/config.yaml
-    echo "    check: false" >> /app/.platformsh/config.yaml
