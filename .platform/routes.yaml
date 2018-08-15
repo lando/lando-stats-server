@@ -1,25 +1,16 @@
 http://metrics.lndo.io/:
   type: redirect
   to: http://{default}/
-https://metrics.lndo.io/:
-  type: redirect
-  to: https://{default}/
 http://stats.lndo.io/:
   type: redirect
   to: http://{default}/
-https://stats.lndo.io/:
-  type: redirect
-  to: https://{default}/
 http://stats.devwithlando.io/:
   type: redirect
   to: http://{default}/
-https://stats.devwithlando.io/:
+http://stats-v2.kalabox.io/:
   type: redirect
-  to: https://{default}/
-https://stats-v2.kalabox.io/:
-  type: redirect
-  to: https://{default}/
-https://{default}/:
+  to: http://{default}/
+http://{default}/:
   type: upstream
   redirects:
     expires: -1s
