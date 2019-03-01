@@ -1,10 +1,9 @@
 name: metrics
-type: nodejs:6.10
+type: nodejs:10
 
 dependencies:
   nodejs:
     pm2: "^2.0.0"
-    grunt-cli: "latest"
 
 web:
   commands:

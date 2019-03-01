@@ -1,19 +1,22 @@
 name: metrics
-recipe: mean
-config:
-  node: '6.10'
-  command: npm start
-  globals:
-    grunt-cli: latest
+excludes:
+  - node_modules
+services:
+  node:
+    type: node:10
+    command: yarn run start
+    build:
+      - yarn
 events:
   pre-push:
-    - appserver: grunt test
+    - node: yarn test
 tooling:
-  grunt:
-    service: appserver
   push:
-    cmd:
-      - git
-      - push
+    cmd: git push
     description: Push new code into QA
     service: appserver
+  yarn:
+    service: node
+  test:
+    cmd: yarn test
+    service: node

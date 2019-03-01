@@ -3,15 +3,14 @@ node_js:
   - '10'
 services:
   - docker
-
 before_install:
   - sudo apt-get -y update
   - sudo apt-get -y install cgroup-bin curl
-  - curl -fsSL -o /tmp/lando-latest.deb https://files.lando.dev/lando-stable.deb
-  - sudo dpkg -i /tmp/lando-latest.deb
-  - lando version
-
+  - sudo bash -c "curl -Ls https://github.com/lando/hyperdrive/releases/download/v0.5.4/hyperdrive > /usr/local/bin/hyperdrive"
+  - sudo chmod +x /usr/local/bin/hyperdrive
 script:
-  - lando npm install
+  - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6B05F25D762E3157
+  - hyperdrive -y --name "Landobot" --email landobot@lando.dev
+  - lando version
   - lando start
-  - lando grunt test
+  - lando test
