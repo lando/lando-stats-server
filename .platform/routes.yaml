@@ -1,3 +1,9 @@
+http://stats.lando.dev/:
+  type: redirect
+  to: http://{default}/
+http://metrics.lando.dev/:
+  type: redirect
+  to: http://{default}/
 http://metrics.lndo.io/:
   type: redirect
   to: http://{default}/
