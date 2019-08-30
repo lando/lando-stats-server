@@ -26,7 +26,7 @@
     "dotenv": "^4.0.0",
     "elasticsearch": "~10.1.2",
     "express": "^4.13.3",
-    "lodash": "~4.17.5",
+    "lodash": "~4.17.13",
     "platformsh": "^1.0.0",
     "verror": "^1.6.0"
   },
