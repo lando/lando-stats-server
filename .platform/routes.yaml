@@ -1,22 +1,22 @@
-http://stats.lando.dev/:
+https://stats.devwithlando.io/:
   type: redirect
-  to: http://{default}/
-http://metrics.lando.dev/:
+  to: https://{default}/
+https://metrics.devwithlando.io/:
   type: redirect
-  to: http://{default}/
-http://metrics.lndo.io/:
+  to: https://{default}/
+https://metrics.lndo.io/:
   type: redirect
-  to: http://{default}/
-http://stats.lndo.io/:
+  to: https://{default}/
+https://stats.lndo.io/:
   type: redirect
-  to: http://{default}/
-http://stats.devwithlando.io/:
+  to: https://{default}/
+https://stats.lando.dev/:
   type: redirect
-  to: http://{default}/
-http://stats-v2.kalabox.io/:
+  to: https://{default}/
+https://stats-v2.kalabox.io/:
   type: redirect
-  to: http://{default}/
-http://{default}/:
+  to: https://{default}/
+https://{default}/:
   type: upstream
   redirects:
     expires: -1s
