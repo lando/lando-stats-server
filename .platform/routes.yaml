@@ -1,6 +1,19 @@
 https://stats.devwithlando.io/:
-  type: redirect
-  to: https://{default}/
+  type: upstream
+  redirects:
+    expires: -1s
+    paths: {}
+  cache:
+    enabled: true
+    default_ttl: 604800
+    cookies:
+    - '*'
+    headers:
+    - Accept
+    - Accept-Language
+  ssi:
+    enabled: false
+  upstream: metrics:http
 https://metrics.devwithlando.io/:
   type: upstream
   redirects:
@@ -18,17 +31,69 @@ https://metrics.devwithlando.io/:
     enabled: false
   upstream: metrics:http
 https://metrics.lndo.io/:
-  type: redirect
-  to: https://{default}/
+  type: upstream
+  redirects:
+    expires: -1s
+    paths: {}
+  cache:
+    enabled: true
+    default_ttl: 604800
+    cookies:
+    - '*'
+    headers:
+    - Accept
+    - Accept-Language
+  ssi:
+    enabled: false
+  upstream: metrics:http
 https://stats.lndo.io/:
-  type: redirect
-  to: https://{default}/
+  type: upstream
+  redirects:
+    expires: -1s
+    paths: {}
+  cache:
+    enabled: true
+    default_ttl: 604800
+    cookies:
+    - '*'
+    headers:
+    - Accept
+    - Accept-Language
+  ssi:
+    enabled: false
+  upstream: metrics:http
 https://stats.lando.dev/:
-  type: redirect
-  to: https://{default}/
+  type: upstream
+  redirects:
+    expires: -1s
+    paths: {}
+  cache:
+    enabled: true
+    default_ttl: 604800
+    cookies:
+    - '*'
+    headers:
+    - Accept
+    - Accept-Language
+  ssi:
+    enabled: false
+  upstream: metrics:http
 https://stats-v2.kalabox.io/:
-  type: redirect
-  to: https://{default}/
+  type: upstream
+  redirects:
+    expires: -1s
+    paths: {}
+  cache:
+    enabled: true
+    default_ttl: 604800
+    cookies:
+    - '*'
+    headers:
+    - Accept
+    - Accept-Language
+  ssi:
+    enabled: false
+  upstream: metrics:http
 https://{default}/:
   type: upstream
   redirects:
