@@ -9,7 +9,7 @@ var Db = require('./elastic.js');
 var VError = require('verror');
 
 /*
- * Helper to load the config
+ * Helper to load the config things
  */
 var getConfig = function() {
 
