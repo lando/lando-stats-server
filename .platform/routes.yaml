@@ -2,8 +2,21 @@ https://stats.devwithlando.io/:
   type: redirect
   to: https://{default}/
 https://metrics.devwithlando.io/:
-  type: redirect
-  to: https://{default}/
+  type: upstream
+  redirects:
+    expires: -1s
+    paths: {}
+  cache:
+    enabled: true
+    default_ttl: 604800
+    cookies:
+    - '*'
+    headers:
+    - Accept
+    - Accept-Language
+  ssi:
+    enabled: false
+  upstream: metrics:http
 https://metrics.lndo.io/:
   type: redirect
   to: https://{default}/
