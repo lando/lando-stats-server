@@ -23,7 +23,7 @@ https://{default}/:
     paths: {}
   cache:
     enabled: true
-    default_ttl: 0
+    default_ttl: 604800
     cookies:
     - '*'
     headers:
