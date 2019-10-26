@@ -1,3 +1,8 @@
+# DEPRECATED!
+
+This is no longer being used! We have moved the metrics server into the core lando repo.
+See https://github.com/lando/lando/tree/master/metrics
+
 Lando Metrics Server
 ====================
 
