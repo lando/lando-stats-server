@@ -59,3 +59,9 @@ git add -A
 git commit -m "#ISSUENUMBER: COMMIT DESCRIPTION"
 lando push origin ISSUESNUMBER-ISSUEDESCRIPITON
 ```
+
+## Other stuff
+
+* [LICENSE](/LICENSE)
+* [TERMS OF USE](https://docs.lando.dev/terms)
+* [PRIVACY POLICY](https://docs.lando.dev/privacy)
